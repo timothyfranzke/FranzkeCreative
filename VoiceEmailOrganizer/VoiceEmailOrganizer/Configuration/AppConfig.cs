@@ -5,7 +5,7 @@ using System.Speech.Recognition;
 using System.Text;
 using System.Timers;
 
-namespace OutlookAddIn1.Configuration
+namespace VoiceEmailOrganizer.Configuration
 {
     public static class AppConfig
     {

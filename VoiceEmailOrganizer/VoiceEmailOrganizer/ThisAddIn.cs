@@ -8,13 +8,14 @@ using System.Speech.Synthesis;
 using System.Speech.Recognition;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using OutlookAddIn1;
 using OutlookAddIn1.Configuration;
 using OutlookAddIn1.Repository;
 using Outlook = Microsoft.Office.Interop.Outlook;
 using Office = Microsoft.Office.Core;
 using Timer = System.Timers.Timer;
 
-namespace OutlookAddIn1
+namespace VoiceEmailOrganizer
 {
     public partial class ThisAddIn
     {
@@ -39,6 +40,7 @@ namespace OutlookAddIn1
             }
             if (AppConfig.SpeakerNoVoiceRecognition)
             {
+                
                 recognizer.SetInputToDefaultAudioDevice();
                 Application.NewMailEx += Application_NewMailEx;
                 recognizer.SpeechRecognized += recognizer_SpeechRecognized;

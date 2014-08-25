@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Office.Interop.Outlook;
 
-namespace OutlookAddIn1.Configuration
+namespace VoiceEmailOrganizer.Configuration
 {
     public static class Questions
     {

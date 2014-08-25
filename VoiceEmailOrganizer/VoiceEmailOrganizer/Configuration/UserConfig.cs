@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace OutlookAddIn1.Configuration
+namespace VoiceEmailOrganizer.Configuration
 {
     public class UserConfig
     {

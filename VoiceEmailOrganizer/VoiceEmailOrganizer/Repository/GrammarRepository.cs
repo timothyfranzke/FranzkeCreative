@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Speech.Recognition;
 using System.Text;
-using OutlookAddIn1.Configuration;
+using VoiceEmailOrganizer.Configuration;
 
-namespace OutlookAddIn1.Repository
+namespace VoiceEmailOrganizer.Repository
 {
     public class GrammarRepository
     {

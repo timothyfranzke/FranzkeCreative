@@ -4,7 +4,7 @@ using System.Linq;
 using System.Speech.Recognition;
 using System.Text;
 
-namespace OutlookAddIn1.Configuration
+namespace VoiceEmailOrganizer.Configuration
 {
     public static class Recognizer
     {

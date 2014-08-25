@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 
-namespace OutlookAddIn1.Configuration
+namespace VoiceEmailOrganizer.Configuration
 {
     public static class RuntimeConfig
     {

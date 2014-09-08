@@ -16,6 +16,7 @@ namespace VoiceEmailOrganizer.Repository
         public Grammar Read;
         public Grammar SettingsOptions;
         public Grammar SettingsVoice;
+        public Grammar Stop;
         public Grammar Folders { get; set; }
 
         public GrammarRepository()
@@ -27,6 +28,7 @@ namespace VoiceEmailOrganizer.Repository
             SettingsOptions = CreateGrammar(Recognizer.SettingsOptionsList(), Recognizer.SettingsOptionsGrammar);
             SettingsVoice = CreateGrammar(Recognizer.SettingsVoice(), Recognizer.SettingsVoiceGrammar);
             Read = CreateGrammar(Recognizer.Read, Recognizer.ReadGrammar);
+            Stop = CreateGrammar(Recognizer.Stop, Recognizer.StopGrammar);
         }
         public Grammar CreateGrammar(string[] actions, string grammar)
         {

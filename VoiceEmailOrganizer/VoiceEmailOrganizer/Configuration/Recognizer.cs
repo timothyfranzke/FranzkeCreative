@@ -35,6 +35,8 @@ namespace VoiceEmailOrganizer.Configuration
         public static string ActionGrammar = "actions";
         public static string FolderGrammar = "folders";
         public static string[] FolderList = { "read folders", "what are my folder options", "folder options", "what folders" };
+        public static string StopGrammar = "stop";
+        public static string[] Stop = {"stop", "quiet"};
 
         public static string[] Folders(List<string> folders)
         {

@@ -8,9 +8,10 @@ using System.Speech.Synthesis;
 using System.Speech.Recognition;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using Microsoft.Win32;
 using OutlookAddIn1;
-using OutlookAddIn1.Configuration;
-using OutlookAddIn1.Repository;
+using VoiceEmailOrganizer.Configuration;
+using VoiceEmailOrganizer.Repository;
 using Outlook = Microsoft.Office.Interop.Outlook;
 using Office = Microsoft.Office.Core;
 using Timer = System.Timers.Timer;
@@ -40,7 +41,6 @@ namespace VoiceEmailOrganizer
             }
             if (AppConfig.SpeakerNoVoiceRecognition)
             {
-                
                 recognizer.SetInputToDefaultAudioDevice();
                 Application.NewMailEx += Application_NewMailEx;
                 recognizer.SpeechRecognized += recognizer_SpeechRecognized;
@@ -66,7 +66,7 @@ namespace VoiceEmailOrganizer
                 else
                 {
                     RuntimeConfig.Start = true;
-                    synth.Speak(Questions.Start);
+                    synth.SpeakAsync(Questions.Start);
                     EnableRecognizer(GrammarRepo.YesNo);
                 }
             }
@@ -86,7 +86,7 @@ namespace VoiceEmailOrganizer
 
             for (int i = 0; i < items.Count - 1; i++)
             {
-                Outlook.MailItem mailItem = items.GetNext();
+                var mailItem = items.GetNext();
                 mItem = new MailInfo() { Mail = mailItem };
                 MailBox.MailList.Push(mItem);
             }
@@ -158,6 +158,7 @@ namespace VoiceEmailOrganizer
             recognizer.LoadGrammarAsync(GrammarRepo.SettingsVoice);
             recognizer.LoadGrammarAsync(GrammarRepo.YesNo);
             recognizer.LoadGrammarAsync(GrammarRepo.Folders);
+            recognizer.LoadGrammarAsync(GrammarRepo.Stop);
         }
 
         #region Recognizers
@@ -167,7 +168,7 @@ namespace VoiceEmailOrganizer
 
             RuntimeConfig.GrammarIndex = recognizer.Grammars.IndexOf(grammarName);
             recognizer.Grammars[RuntimeConfig.GrammarIndex].Enabled = true;
-            recognizer.Recognize();
+            recognizer.RecognizeAsync();
 
         }
 
@@ -358,11 +359,10 @@ namespace VoiceEmailOrganizer
             if (RuntimeConfig.Read)
             {
                 RuntimeConfig.Reset();
-                var message = MailInfo.Mail.HTMLBody;
                 var body = MailInfo.Mail.Body;
-                synth.Speak(body);
-                synth.Speak(Questions.Proceed);
-                EnableRecognizer(GrammarRepo.Actions);
+                synth.SpeakAsync(body);
+                synth.SpeakCompleted += synth_SpeakCompleted;
+                EnableRecognizer(GrammarRepo.Stop);
             }
             if (RuntimeConfig.Skip)
             {
@@ -389,7 +389,7 @@ namespace VoiceEmailOrganizer
                 }
                 else
                 {
-                    synth.Speak(Confirmation.Action(SingleStatements.Delete));
+                    synth.SpeakAsync(Confirmation.Action(SingleStatements.Delete));
                     EnableRecognizer(GrammarRepo.YesNo);
                 }
 
@@ -402,10 +402,10 @@ namespace VoiceEmailOrganizer
             }
             if (RuntimeConfig.ReadFolders)
             {
-                synth.Speak(Statements.FolderNames);
+                synth.SpeakAsync(Statements.FolderNames);
                 foreach (var folder in MailBox.Folders)
                 {
-                    synth.Speak(folder);
+                    synth.SpeakAsync(folder);
                 }
                 RuntimeConfig.ReadFolders = false;
             }
@@ -415,17 +415,31 @@ namespace VoiceEmailOrganizer
                 {
                     var destFolder = inBox.Folders[RuntimeConfig.FolderName];
                     MailInfo.Mail.Move(destFolder);
-                    synth.Speak(Statements.ActionMoveConfirmation(destFolder.Name));
+                    synth.SpeakAsync(Statements.ActionMoveConfirmation(destFolder.Name));
                     RuntimeConfig.Reset();
                     ReadMailItem();
                 }
                 else
                 {
-                    synth.Speak(Questions.Folder);
+                    synth.SpeakAsync(Questions.Folder);
                     EnableRecognizer(GrammarRepo.Folders);
                 }
             }
+            if (RuntimeConfig.SpeakerStop)
+            {
+                synth.SpeakAsyncCancelAll();
+                RuntimeConfig.Reset();
+                synth.Speak(Questions.Proceed);
+                EnableRecognizer(GrammarRepo.Actions);
+            }
         }
+
+        private void synth_SpeakCompleted(object sender, SpeakCompletedEventArgs e)
+        {
+            synth.SpeakCompleted += synth_SpeakCompleted;
+            EnableRecognizer(GrammarRepo.Actions);
+        }
+
         #endregion
 
         private void GetMailItem()
